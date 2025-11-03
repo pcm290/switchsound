@@ -1,0 +1,26 @@
+{
+  "name": "switchtester",
+  "version": "1.0.0",
+  "description": "Interactive keyboard switch comparison tool",
+  "scripts": {
+    "start": "parcel src/index.html --dist-dir dist",
+    "build": "parcel build src/index.html --dist-dir dist --public-url ./"
+  },
+  "staticFiles": {
+    "staticPath": "static",
+    "staticOutPath": "."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.16",
+    "buffer": "^6.0.3",
+    "parcel": "^2.16.0",
+    "parcel-reporter-static-files-copy": "^1.5.3",
+    "tailwindcss": "^4.1.14"
+  }
+}
