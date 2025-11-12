@@ -1,12 +1,21 @@
 name: Keep Supabase Alive
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 */12 * * *"  
   workflow_dispatch:        
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Keep Supabase Alive Ping
-        run: curl -I "https://qmmxouhwkmtrpptzoiqp.supabase.co/rest/v1/" || true
+      - name: Query Switches Table
+        env:
+          SUPABASE_URL: https://qmmxouhwkmtrpptzoiqp.supabase.co
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "Making real database query..."
+          curl -X GET "$SUPABASE_URL/rest/v1/switches?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json"
+          echo "Query completed successfully!"
