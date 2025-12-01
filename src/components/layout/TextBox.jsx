@@ -61,6 +61,7 @@ export default function TextBox({
   style = {}
 }) {
   const [guidedText, setGuidedText] = useState("");
+  const [freeText, setFreeText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [charsPerLine, setCharsPerLine] = useState(99);
   const [guidedTextOffset, setGuidedTextOffset] = useState(0);
@@ -103,6 +104,10 @@ export default function TextBox({
       }, 100);
     } else {
       setUserInput("");
+      setFreeText("");
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
     }
   }, [mode, charsPerLine]); 
 
@@ -137,6 +142,10 @@ export default function TextBox({
     if (e.key.length === 1 || e.key === 'Backspace' || e.key === ' ') playPressSound();
   };
 
+  const handleFreeTextChange = (e) => {
+    setFreeText(e.target.value);
+  };
+
   const handleKeyUp = (e) => {
     pressedKeysRef.current.delete(e.key);
     if (e.key.length === 1 || e.key === 'Backspace' || e.key === ' ') playReleaseSound();
@@ -148,12 +157,21 @@ export default function TextBox({
   };
 
   const handleContainerClick = () => {
-    if (mode === "guided") inputRef.current?.focus();
+    e.stopPropagation();
+    if (mode === "guided") {
+      inputRef.current?.focus();
+    } else {
+      textareaRef.current?.focus();
+    }
   };
 
   const handleBlur = (e) => {
     setTimeout(() => {
-      if (mode === "guided" && inputRef.current) inputRef.current.focus();
+      if (mode === "guided" && inputRef.current) {
+        inputRef.current.focus();
+      } else if (mode === "free" && textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }, 0);
   };
 
@@ -212,6 +230,7 @@ export default function TextBox({
       ref={boxRef}
       className="flex justify-center items-center m-0 p-0 w-full h-full"
       style={style}
+      onClick={(e) => e.stopPropagation()}
     >
       <div
         className="w-full h-full rounded-[1vw] py-[1vh] relative cursor-text overflow-hidden transition-all duration-700 flex items-center"
@@ -226,8 +245,16 @@ export default function TextBox({
         {mode === "free" ? (
           <textarea
             ref={textareaRef}
+            value={freeText} 
+            onChange={handleFreeTextChange} 
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
+            onBlur={handleBlur}
+            autoFocus 
+            spellCheck="false"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
             className="w-full h-full bg-transparent leading-[1.6]
                      text-left outline-none border-none resize-none
                      m-0 p-0
@@ -244,7 +271,8 @@ export default function TextBox({
               borderRadius: "1vw", 
               boxSizing: "border-box",
               backgroundClip: "padding-box",
-              overflow: "auto"
+              overflow: "auto",
+              caretColor: primaryColor 
             }}
             placeholder="Escribe aquí libremente..."
           ></textarea>
